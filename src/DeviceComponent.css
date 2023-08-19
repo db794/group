@@ -1,0 +1,10 @@
+/* DeviceComponent.css */
+.remove-button {
+  font-size: 14px;
+  padding: 0;
+  margin-left: 8px;
+  color: red;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
