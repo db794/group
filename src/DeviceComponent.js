@@ -6,8 +6,10 @@ import ScenarioModal from "./ScenarioModal"; // Import the ScenarioModal compone
 const DeviceComponent = () => {
   const [devices, setDevices] = useState([]);
   const [newDeviceName, setNewDeviceName] = useState("");
-  const [selectedDevice, setSelectedDevice] = useState(null); // Track selected device
-  const [scenarioModalOpen, setScenarioModalOpen] = useState(false); // Track modal state
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
+  const [newScenarioName, setNewScenarioName] = useState(""); 
+  const [scenarios, setscenarios] = useState([]); 
   const history = useHistory();
 
   const handleAddDevice = () => {
@@ -40,6 +42,31 @@ const DeviceComponent = () => {
     setScenarioModalOpen(false);
   };
 
+  const handleAddScenario = () => {
+    if (newScenarioName.trim() === "") {
+      alert("Please enter a valid scenario name.");
+      return;
+    }
+
+    setSelectedDevice((prevDevice) => {
+      const updatedDevices = devices.map((device) => {
+        if (device === prevDevice) {
+          return { ...device, scenario: newScenarioName };
+        }
+        return device;
+      });
+      setDevices(updatedDevices);
+      return null;
+    });
+    setscenarios(prev=>{
+      return [
+        ...scenarios, newScenarioName
+      ]
+    })
+
+    setNewScenarioName("");
+  };
+
   return (
     <div>
       <h2>Device Component</h2>
@@ -51,6 +78,15 @@ const DeviceComponent = () => {
           placeholder="Enter device name"
         />
         <button onClick={handleAddDevice}>Add Device</button>
+      </div>
+      <div>
+        <input
+          type="text"
+          value={newScenarioName}
+          onChange={(e) => setNewScenarioName(e.target.value)}
+          placeholder="Enter new scenario"
+        />
+        <button onClick={handleAddScenario}>Add Scenario</button>
       </div>
       <ul>
         {devices.map((device, index) => (
@@ -67,13 +103,7 @@ const DeviceComponent = () => {
       </ul>
       <ScenarioModal
         isOpen={scenarioModalOpen}
-        scenarios={[
-          "Scenario 1",
-          "Scenario 2",
-          "Scenario 3",
-          "Scenario 4",
-          "Scenario 5",
-        ]}
+        scenarios={scenarios}
         onSelectScenario={handleScenarioSelect}
         onClose={handleCloseModal}
       />
