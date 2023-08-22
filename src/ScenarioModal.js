@@ -10,8 +10,8 @@ const ScenarioModal = ({ isOpen, scenarios, onSelectScenario, onClose }) => {
         <h3>Select Scenario</h3>
         <ul>
           {scenarios.map((scenario, index) => (
-            <li key={index} onClick={() => onSelectScenario(scenario)}>
-              {scenario}
+            <li key={index} onClick={() => onSelectScenario(scenario.name)}>
+              {scenario.name}
             </li>
           ))}
         </ul>

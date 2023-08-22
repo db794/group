@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import "./DeviceComponent.css";
 import { useHistory } from "react-router-dom";
 import ScenarioModal from "./ScenarioModal"; // Import the ScenarioModal component
+import HealthDataInput from "./HealthDataInput";
 
 const DeviceComponent = () => {
   const [devices, setDevices] = useState([]);
   const [newDeviceName, setNewDeviceName] = useState("");
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [scenarioModalOpen, setScenarioModalOpen] = useState(false);
-  const [newScenarioName, setNewScenarioName] = useState(""); 
-  const [scenarios, setscenarios] = useState([]); 
+  const [newScenarioData, setNewScenarioData] = useState({
+    name: "",
+    steps: ["", "", "", "", ""],
+  });
+  const [scenarios, setScenarios] = useState([]);
   const history = useHistory();
 
   const handleAddDevice = () => {
@@ -34,7 +38,15 @@ const DeviceComponent = () => {
   };
 
   const handleScenarioSelect = (selectedScenario) => {
-    history.push(`/device/${selectedDevice}?scenario=${selectedScenario}`);
+    history.push({
+      pathname: `/device/${selectedDevice.name}`,
+      search: `?scenario=${selectedScenario}`,
+      state: {
+        selectedScenarioData: scenarios.find(
+          (s) => s.name === selectedScenario
+        ),
+      },
+    });
   };
 
   const handleCloseModal = () => {
@@ -43,7 +55,7 @@ const DeviceComponent = () => {
   };
 
   const handleAddScenario = () => {
-    if (newScenarioName.trim() === "") {
+    if (newScenarioData.name.trim() === "") {
       alert("Please enter a valid scenario name.");
       return;
     }
@@ -51,20 +63,31 @@ const DeviceComponent = () => {
     setSelectedDevice((prevDevice) => {
       const updatedDevices = devices.map((device) => {
         if (device === prevDevice) {
-          return { ...device, scenario: newScenarioName };
+          return { ...device, scenario: newScenarioData };
         }
         return device;
       });
       setDevices(updatedDevices);
       return null;
     });
-    setscenarios(prev=>{
-      return [
-        ...scenarios, newScenarioName
-      ]
-    })
 
-    setNewScenarioName("");
+    setScenarios((prevScenarios) => [...prevScenarios, newScenarioData]);
+    setNewScenarioData({ name: "", steps: ["", "", "", "", ""] });
+  };
+
+  const handleScenarioNameChange = (e) => {
+    setNewScenarioData((prevData) => ({
+      ...prevData,
+      name: e.target.value,
+    }));
+  };
+
+  const handleStepChange = (index, value) => {
+    setNewScenarioData((prevData) => {
+      const updatedSteps = [...prevData.steps];
+      updatedSteps[index] = value;
+      return { ...prevData, steps: updatedSteps };
+    });
   };
 
   return (
@@ -82,10 +105,19 @@ const DeviceComponent = () => {
       <div>
         <input
           type="text"
-          value={newScenarioName}
-          onChange={(e) => setNewScenarioName(e.target.value)}
-          placeholder="Enter new scenario"
+          value={newScenarioData.name}
+          onChange={handleScenarioNameChange}
+          placeholder="Enter new scenario name"
         />
+        {newScenarioData.steps.map((step, index) => (
+          <input
+            key={index}
+            type="text"
+            value={step}
+            onChange={(e) => handleStepChange(index, e.target.value)}
+            placeholder={`Enter step ${index + 1}`}
+          />
+        ))}
         <button onClick={handleAddScenario}>Add Scenario</button>
       </div>
       <ul>

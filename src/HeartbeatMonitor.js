@@ -25,18 +25,18 @@ class HeartbeatMonitor extends Component {
     }));
   };
 
-  renderStepContent = () => {
+  renderStepContent = (steps) => {
     switch (this.state.currentStep) {
       case 1:
-        return <div>Step 1 Content</div>;
+        return <div>{steps[0]}</div>;
       case 2:
-        return <div>Step 2 Content</div>;
+        return <div>{steps[1]}</div>;
       case 3:
-        return <div>Step 3 Content</div>;
+        return <div>{steps[2]}</div>;
       case 4:
-        return <div>Step 4 Content</div>;
+        return <div>{steps[3]}</div>;
       case 5:
-        return <div>Step 5 Content</div>;
+        return <div>{steps[4]}</div>;
       default:
         return null;
     }
@@ -76,6 +76,8 @@ class HeartbeatMonitor extends Component {
 
   render() {
     const { id } = this.props.match.params;
+    const { steps } = this.props.location.state.selectedScenarioData;
+    console.log(this.props);
     const {
       ecgBPM,
       RESPvalue,
@@ -87,7 +89,6 @@ class HeartbeatMonitor extends Component {
       editableValue,
       editableValueName,
     } = this.state;
-    console.log(this.props);
     return (
       <>
         <div
@@ -100,7 +101,7 @@ class HeartbeatMonitor extends Component {
             left: "20%",
           }}
         >
-          {this.renderStepContent()}
+          {this.renderStepContent(steps)}
           {this.state.currentStep < 5 ? (
             <button onClick={this.handleNext}>Next</button>
           ) : (
